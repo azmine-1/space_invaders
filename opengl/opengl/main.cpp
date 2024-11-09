@@ -24,6 +24,18 @@ inline void gl_debug(const char* file, int line) {
 }
 
 #undef GL_ERROR_CASE
+struct Buffer {
+    size_t width, height; 
+    uint32_t* data;
+};
+uint32_t rgb_to_uint32(uint32_t r, uint32_t g, uint32_t b) {
+    return (r << 24) | (g << 16) | (b << 8) | 255;
+}
+static void buffer_clear(Buffer* buffer, uint32_t color) {
+    for (int i = 0; i < buffer->width * buffer->height; ++i) {
+        buffer->data[i] = color; 
+    }
+}
 
 void error_callback(int error, const char* description)
 {
@@ -31,8 +43,44 @@ void error_callback(int error, const char* description)
 }
 
 int main(int argc, char* argv[])
-{
+{   
+    uint32_t clear_color = rgb_to_uint32(0, 128, 0);
+    const size_t buffer_width = 224;
+    const size_t buffer_height = 256;
+    Buffer buffer;
+    buffer.width = buffer_width;
+    buffer.height = buffer_height;
+    buffer.data = new uint32_t[buffer.width * buffer.height];
+    buffer_clear(&buffer, clear_color);
     glfwSetErrorCallback(error_callback);
+    static const char* fragment_shader =
+        "\n"
+        "#version 330\n"
+        "\n"
+        "uniform sampler2D buffer;\n"
+        "noperspective in vec2 TexCoord;\n"
+        "\n"
+        "out vec3 outColor;\n"
+        "\n"
+        "void main(void){\n"
+        "    outColor = texture(buffer, TexCoord).rgb;\n"
+        "}\n";
+    static const char* vertex_shader =
+        "\n"
+        "#version 330\n"
+        "\n"
+        "noperspective out vec2 TexCoord;\n"
+        "\n"
+        "void main(void){\n"
+        "\n"
+        "    TexCoord.x = (gl_VertexID == 2)? 2.0: 0.0;\n"
+        "    TexCoord.y = (gl_VertexID == 1)? 2.0: 0.0;\n"
+        "    \n"
+        "    gl_Position = vec4(2.0 * TexCoord - 1.0, 0.0, 1.0);\n"
+        "}\n";
+    GLuint fullscreen_triangle_vao;
+    glGenVertexArrays(1, &fullscreen_triangle_vao);
+    glBindVertexArray(fullscreen_triangle_vao);
 
     GLFWwindow* window;
 
