@@ -1,6 +1,5 @@
 # Space Invaders
-<p1>building on top of this https://nicktasios.nl/posts/space-invaders-from-scratch-part-1.html
-current progress</p1> 
+<p1>building on top of this https://nicktasios.nl/posts/space-invaders-from-scratch-part-1.html</p1> 
 
 # To do 
 - Add better graphics 
