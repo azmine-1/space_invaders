@@ -6,8 +6,6 @@
 - Make monsters move and shoot back
 - Allow window resize and fix bug with fullscreen
 - Add music 
-
-# Stuff im for "sure" doing
 <li> Compile this into wasm </li>
 <li> Host on github pages </li>
 
